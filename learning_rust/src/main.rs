@@ -1,34 +1,24 @@
+mod oefeningen;
+mod search_algorithms;
+
+pub use oefeningen::*;
+pub use search_algorithms::*;
 
 
-// het 3x+1 probleem
-fn collatz_conjecture(mut input_number: i64) -> i64
+
+
+
+fn main() 
 {
-    for i in 0..std::i64::MAX
-    {
-        println!("huidig nummer => {}", input_number);
-        if input_number == 1
-        {
-            println!("We zijn tot {} gekomen na {} stappen!", input_number, i);
-            return i;
-        }
-        else if input_number % 2 == 0
-        {
-            input_number /= 2;
-        }
-        else if input_number % 2 != 0
-        {
-            input_number = input_number * 3 + 1;
-        }
-    }
-    println!("Bereik te groot!");
-    return 0;
-}
-
-
-fn main() {
     println!("Hello, world!");
 
-    let _x = collatz_conjecture(27);
+    let _x = oefeningen::oefeningen::collatz_conjecture(27);
+
+    // let _y = oefeningen::oefeningen::count_letter_occurances("..\\test.txt");
+
+    let list = [1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,11.0,12.0,13.0,14.0,15.0,16.0,17.0,18.0,19.0,20.0];
+
+    let result = search_algorithms::binary_search(17.0, &list);
 
 }
 
