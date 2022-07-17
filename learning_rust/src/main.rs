@@ -22,7 +22,8 @@ fn main()
 
     for i in 1..20
     {
-        let result = search_algorithms::binary_search(i as f32, &list);
+        let result_binary_search = search_algorithms::binary_search(i as f32, &list);
+        let result_linear_search = search_algorithms::linear_search(i as f32, &list);
     }
     
 

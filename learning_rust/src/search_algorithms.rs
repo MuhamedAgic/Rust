@@ -32,7 +32,6 @@ fn make_even(input_number: f32, add_one: bool) -> f32
 }
 
 // Voor nu een lijst met getallen doorzoeken
-// er zit nog een bugje in
 pub fn binary_search(item_to_find: f32, list: &[f32]) -> Option<f32>
 {
     println!("Start binary search.");
@@ -88,4 +87,24 @@ pub fn binary_search(item_to_find: f32, list: &[f32]) -> Option<f32>
         println!("{} Item om te zoeken -> {}", "NIET GEVONDEN!".red(), item_to_find);
         None
     }
+}
+
+
+pub fn linear_search(item_to_find: f32, list: &[f32]) -> Option<f32>
+{
+    println!("Start linear search.");
+    println!("Item to find -> {}", &item_to_find);
+
+    // Begin bij het het begin van de lijst    
+    // Loop gewoon de lijst af, hebben we een iten dan returnen we hem, zo niet dan niks
+    for i in 0..list.len()
+    {
+        if list[i] == item_to_find
+        {
+            println!("{} Item om te zoeken -> {}, gevonden -> {}", "GEVONDEN!".green(), item_to_find, list[i]);
+            return Some(list[i]);
+        }
+    }
+    println!("{} Item om te zoeken -> {}", "NIET GEVONDEN!".red(), item_to_find);
+    None
 }
