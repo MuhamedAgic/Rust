@@ -25,7 +25,12 @@ fn main()
         let result_binary_search = search_algorithms::binary_search(i as f32, &list);
         let result_linear_search = search_algorithms::linear_search(i as f32, &list);
     }
-    
+
+    // Onderstaande nog fixen
+    let list_of_cities = get_list_of_random_cities();
+    let city_connections = connect_cities_randomly(&list_of_cities);
+
+    print_city_connections(&city_connections.unwrap());
 
 }
 

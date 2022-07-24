@@ -6,8 +6,13 @@
 // Breadth first search
 // Depth first search
 
+extern crate multimap;
+
 use colored::*;
-use rand::Rng;
+use rand::{Rng};
+use core::panic;
+use multimap::MultiMap;
+use std::marker::Copy;
 
 // Helper functie
 fn make_even(input_number: f32, add_one: bool) -> f32
@@ -129,33 +134,42 @@ pub fn linear_search(item_to_find: f32, list: &[f32]) -> Option<f32>
 
 // This debug attribute implements fmt::Debug which will allow us
 // to print the struct using {:?}
-#[derive(Debug, Clone)]
-pub struct City
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct City<'a>
 {
     id: u64,
-    name: String,
+    name: &'a str ,
     popuation: u64,
     area: u64,          //m^2
 }
 
-#[derive(Debug)]
-pub struct CityConnection
+impl<'a> City<'a>
 {
-    city1: City,
-    city2: City
+    // The new function returns a city (Self)
+    pub fn new() -> Self
+    {
+        City
+        {
+            id: 0,
+            name: "0",
+            popuation: 0,
+            area: 0
+        }
+    }
 }
+
 
 // https://stackoverflow.com/questions/62422857/how-to-implement-a-struct-in-rust-that-has-a-list-of-itself-as-a-field
 // This debug attribute implements fmt::Debug which will allow us
 // to print the struct using {:?}
 
-// Het boeit even niet of de gegevnes kloppen...
+// Het boeit even niet of de gegevens kloppen...
 // Hoeveel connectie combinaties mogelijk voor 10 steden?
 // Elke stad verbinden met de andere geeft -> 1 verbonden met 2,3,4,...
-// Maar 2 niet weer verbinden met 1, dus het is (n-1)! aantal COMBINATIES (dat is ongelijk aanhet aantal verbindingen -> (n-1)+(n-2)...(n-(n-1)))
-// Want: 1 verbinden met andere 9, maar dat kan elke 1 zijn die verbind met 9 dus 10 combinaties
+// Maar 2 niet weer verbinden met 1, dus het is (n-1)! aantal COMBINATIES (dat is ongelijk aanhet aantal verbindingen per combinatie -> (n-1)+(n-2)...(n-(n-1)))
+// Want: 1 verbinden met andere 9, maar dat kan elke 1 zijn die verbind met 9 dus 10 combinaties mogelijk waarbij de eerste verbind met de andere 9
 // De 2e die verbind met 8 andere etc
-pub fn get_list_of_random_cities() -> [City; 10]
+pub fn get_list_of_random_cities() -> [City<'static>; 10]
 {
     let list_of_city_names = [
         "Amsterdam",
@@ -179,7 +193,7 @@ pub fn get_list_of_random_cities() -> [City; 10]
     ];
 
     // wat irritant is dit...
-    let mut list_of_random_cities = [City { id: 1, name: "a".to_string(), popuation: 1, area: 1 }; 10];
+    let mut list_of_random_cities = [City::new(); 10];
     for i in 0..10
     {
         list_of_random_cities[i] = 
@@ -187,7 +201,7 @@ pub fn get_list_of_random_cities() -> [City; 10]
             City
             {
                 id: i as u64, 
-                name: list_of_city_names[rand::thread_rng().gen_range(0..list_of_city_names.len())].to_string(), 
+                name: list_of_city_names[rand::thread_rng().gen_range(0..list_of_city_names.len())], 
                 popuation: rand::thread_rng().gen_range(10..1000000), 
                 area: rand::thread_rng().gen_range(100..5000000)
             }
@@ -197,16 +211,90 @@ pub fn get_list_of_random_cities() -> [City; 10]
 }
 
 
-pub fn connect_cities_randomly(list_of_cities: &[City; 10]) -> Option<[CityConnection; 20]>
+pub fn return_random_city(list_of_cities: &[City<'static>]) -> Option<City<'static>>
+{
+    return Some(list_of_cities[rand::thread_rng().gen_range(0..list_of_cities.len())]);
+}
+
+
+pub fn make_random_city_connection(list_of_cities: &[City<'static>]) -> Option<(City<'static>, City<'static>)>
+{
+    return Some( (return_random_city(list_of_cities).unwrap(), return_random_city(list_of_cities).unwrap()) );
+}
+
+
+// Adhv een lijst met 10 steden, de steden aan elkaar linken, dit is nog niet perfect...
+pub fn connect_cities_randomly(list_of_cities: &[City<'static>]) -> Option<MultiMap<City<'static>, City<'static>>>
 {
     // Verbind steden op een random manier obv de lijst met steden die je hebt
-    // We weten dat combinaties (n-1)! is en dat er (n-1)+(n-2)... verbindingen zijn
+    // We weten dat combinaties (n-1)! is en dat er (n-1)+(n-2)... verbindingen zijn per combinatie
+    let mut city_connections: MultiMap<City, City> = MultiMap::new();
 
-    for i in 0..19
+    let (city1, city2) = make_random_city_connection(list_of_cities).unwrap();
+
+    // Als de lijst leeg is, voeg een connectie toe
+    if city_connections.is_empty()
     {
-        // Maak een verbinding, maar als een stad al met een andere verbonden is, die overslaan
+        if city1 != city2
+        {
+            city_connections.insert(city1, city2);
+        }
+    }
 
+    // we maken 20 connecties (0 TM 19)
+    for i in 0..=city_connections.capacity() - 1
+    {
+        // We kunnen 2 dezelfde steden hebben, dus er moet een check bij komen
+        let (mut city1, mut city2) = make_random_city_connection(list_of_cities).unwrap();
+
+        // We proberen maximaal 10 keer om 2 verschillende steden te hebben (moet bijna altijd goed gaan)
+        for j in 0..=9
+        {
+            // Een stad mag niet verbonden zijn met zichzelf
+            if city_connections.contains_key(&city1)
+            {
+                // Is city1 al verbonden met city2? (Dat mag niet gebeuren)
+                // get all values corresponding to key -> unwrap the option -> into iter -> find an item in it which is equal to city2
+                let possibly_existing_city_connections = city_connections
+                                                                        .get_vec(&city1)
+                                                                        .unwrap()
+                                                                        .into_iter()
+                                                                        .find(|item| *item == &city2);
+                match possibly_existing_city_connections
+                {
+                    // Als die een city2 vind die al verbonden is met city1, dan een nieuwe city2 voor nu
+                    Some(&city) => city2 = return_random_city(list_of_cities).unwrap(),
+                    // Connectie bestaat niet, city2 is niet verbonden met city1 (want hij is niet gevonden), dus connectie kan gemaakt worden
+                    None => 
+                    {
+                        city_connections.insert(city1, city2);
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                if j == 9
+                {
+                    panic!("Na 10x proberen zijn 2 steden nog steeds hetzelfde!");
+                }
+                if city1 != city2
+                {
+                    city_connections.insert(city1, city2);
+                    break;
+                }
+            }
+        }
     }
 
     return None;
+}
+
+
+pub fn print_city_connections(city_connections: &MultiMap<City<'static>, City<'static>>) -> ()
+{
+    for (key, values) in city_connections.iter_all() 
+    {
+        println!("Stad: {:?} verbonden met ---> {:?}", key, values);
+    }
 }
