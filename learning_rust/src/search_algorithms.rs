@@ -12,7 +12,8 @@ use colored::*;
 use rand::{Rng};
 use core::panic;
 use multimap::MultiMap;
-use std::marker::Copy;
+use std::{marker::Copy, ops::RangeBounds};
+use std::ops::Range;
 
 // Helper functie
 fn make_even(input_number: f32, add_one: bool) -> f32
@@ -194,6 +195,7 @@ pub fn get_list_of_random_cities() -> [City<'static>; 10]
 
     // wat irritant is dit...
     let mut list_of_random_cities = [City::new(); 10];
+    let mut list_of_added_cities_indexes: [i32; 10] = [0; 10];
     for i in 0..10
     {
         list_of_random_cities[i] = 
@@ -201,13 +203,55 @@ pub fn get_list_of_random_cities() -> [City<'static>; 10]
             City
             {
                 id: i as u64, 
-                name: list_of_city_names[rand::thread_rng().gen_range(0..list_of_city_names.len())], 
+                name: list_of_city_names[exclusive_random(0, list_of_city_names.len().try_into().unwrap(), &list_of_added_cities_indexes).unwrap() as usize], 
                 popuation: rand::thread_rng().gen_range(10..1000000), 
                 area: rand::thread_rng().gen_range(100..5000000)
             }
-        }
+        };
+        list_of_added_cities_indexes[i] = list_of_city_names
+                                         .iter()
+                                         .position(|&element| element == list_of_random_cities[i].name)
+                                         .unwrap() as i32;
     }
     return list_of_random_cities;
+}
+
+
+// Deze functie biedt geen garantie...
+pub fn exclusive_random(range_start: i32, range_end: i32, numbers_to_exclude: &[i32]) -> Option<i32>
+{
+    if numbers_to_exclude.is_empty()
+    {
+        return Some(rand::thread_rng().gen_range(range_start..range_end));
+    }
+    
+    let mut random_number = rand::thread_rng().gen_range(range_start..range_end);
+    let (mut current_try, mut max_num_tries) = (0, 50);
+
+    // Loop door de getallen die je niet wilt genereren, de rest mag wel
+    for mut i in 0..numbers_to_exclude.len()
+    {            
+        if random_number == numbers_to_exclude[i]
+        {
+            if current_try == max_num_tries
+            {
+                panic!("Random nummer genereren mislukt! in de range {}..{} mochten de volgende getallen niet voorkomen: {:?}", range_start, range_end, numbers_to_exclude);
+            }
+            current_try += 1;
+            random_number = rand::thread_rng().gen_range(range_start..range_end);
+            if i > 0
+            {
+                i -= 1; // Ik wil hem dan opnieuw checken
+            }
+            else 
+            {
+                i = 0;
+            }
+        }
+    }
+    
+    // Nog een check hoeft niet, of hij paniced, of hij is goed
+    return Some(random_number);
 }
 
 
@@ -222,6 +266,23 @@ pub fn make_random_city_connection(list_of_cities: &[City<'static>]) -> Option<(
     return Some( (return_random_city(list_of_cities).unwrap(), return_random_city(list_of_cities).unwrap()) );
 }
 
+pub fn get_max_possible_city_connections(amount_of_cities: i32) -> i32
+{
+    // Ik wil niet dat een stad met meer dan een een derde van de andere steden verbonden is
+    let mut amount_possible_connections = 0;
+    // Hier gebeuren enge dingen...
+    for i in 0..amount_of_cities
+    {
+        amount_possible_connections += i;
+    }
+    return amount_possible_connections;
+}
+
+pub fn get_amount_of_occurances(city: &City, list_of_cities: &MultiMap<City, City>) -> Option<i32>
+{
+    return Some(list_of_cities.get_vec(&city).unwrap().len() as i32);
+}
+
 
 // Adhv een lijst met 10 steden, de steden aan elkaar linken, dit is nog niet perfect...
 pub fn connect_cities_randomly(list_of_cities: &[City<'static>]) -> Option<MultiMap<City<'static>, City<'static>>>
@@ -229,6 +290,8 @@ pub fn connect_cities_randomly(list_of_cities: &[City<'static>]) -> Option<Multi
     // Verbind steden op een random manier obv de lijst met steden die je hebt
     // We weten dat combinaties (n-1)! is en dat er (n-1)+(n-2)... verbindingen zijn per combinatie
     let mut city_connections: MultiMap<City, City> = MultiMap::new();
+
+    let max_permissible_connections_per_city = ((get_max_possible_city_connections(list_of_cities.len() as i32) as f32) / 4.0).round() as i32;
 
     let (city1, city2) = make_random_city_connection(list_of_cities).unwrap();
 
@@ -242,7 +305,7 @@ pub fn connect_cities_randomly(list_of_cities: &[City<'static>]) -> Option<Multi
     }
 
     // we maken 20 connecties (0 TM 19)
-    for i in 0..=city_connections.capacity() - 1
+    for i in 0..20
     {
         // We kunnen 2 dezelfde steden hebben, dus er moet een check bij komen
         let (mut city1, mut city2) = make_random_city_connection(list_of_cities).unwrap();
@@ -250,20 +313,28 @@ pub fn connect_cities_randomly(list_of_cities: &[City<'static>]) -> Option<Multi
         // We proberen maximaal 10 keer om 2 verschillende steden te hebben (moet bijna altijd goed gaan)
         for j in 0..=9
         {
-            // Een stad mag niet verbonden zijn met zichzelf
             if city_connections.contains_key(&city1)
             {
+                // Als het max aantal conecties dat een stad heeft gemaakt overschreden zijn...
+                let connections_with_city1 = get_amount_of_occurances(&city1, &city_connections).unwrap();
+
+                if connections_with_city1 > max_permissible_connections_per_city
+                {
+                    // City 1 aanpassen
+                    city1 = return_random_city(list_of_cities).unwrap();
+                }
+                // Een stad mag niet verbonden zijn met zichzelf
                 // Is city1 al verbonden met city2? (Dat mag niet gebeuren)
                 // get all values corresponding to key -> unwrap the option -> into iter -> find an item in it which is equal to city2
                 let possibly_existing_city_connections = city_connections
                                                                         .get_vec(&city1)
                                                                         .unwrap()
                                                                         .into_iter()
-                                                                        .find(|item| *item == &city2);
+                                                                        .find(|item| item == &&city2);
                 match possibly_existing_city_connections
                 {
                     // Als die een city2 vind die al verbonden is met city1, dan een nieuwe city2 voor nu
-                    Some(&city) => city2 = return_random_city(list_of_cities).unwrap(),
+                    Some(&City) => city2 = return_random_city(list_of_cities).unwrap(),
                     // Connectie bestaat niet, city2 is niet verbonden met city1 (want hij is niet gevonden), dus connectie kan gemaakt worden
                     None => 
                     {
@@ -290,6 +361,13 @@ pub fn connect_cities_randomly(list_of_cities: &[City<'static>]) -> Option<Multi
     return None;
 }
 
+pub fn print_list_of_cities(list_of_cities: &[City]) -> ()
+{
+    for i in 0..list_of_cities.len()
+    {
+        println!("Stad: {:?}", list_of_cities[i]);
+    }
+}
 
 pub fn print_city_connections(city_connections: &MultiMap<City<'static>, City<'static>>) -> ()
 {

@@ -30,7 +30,12 @@ fn main()
     let list_of_cities = get_list_of_random_cities();
     let city_connections = connect_cities_randomly(&list_of_cities);
 
-    print_city_connections(&city_connections.unwrap());
+    print_list_of_cities(&list_of_cities);
+    
+    println!("Een random getal tussen de 0 en 10 waar geen [3, 6, 9] in zitten: {}", exclusive_random(0, 10, &[3, 6, 9]).unwrap());
+
+
+    //print_city_connections(&city_connections.unwrap());
 
 }
 
