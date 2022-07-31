@@ -266,11 +266,13 @@ pub fn make_random_city_connection(list_of_cities: &[City<'static>]) -> Option<(
     return Some( (return_random_city(list_of_cities).unwrap(), return_random_city(list_of_cities).unwrap()) );
 }
 
+// We weten dat combinaties n! is en dat er (n-1)+(n-2)... verbindingen zijn per combinatie
 pub fn get_max_possible_city_connections(amount_of_cities: i32) -> i32
 {
     // Ik wil niet dat een stad met meer dan een een derde van de andere steden verbonden is
     let mut amount_possible_connections = 0;
     // Hier gebeuren enge dingen...
+    // Let wel: 0 tm amountof cities - 1 gebeurt hier, en dat is de bedoeling
     for i in 0..amount_of_cities
     {
         amount_possible_connections += i;
@@ -283,29 +285,30 @@ pub fn get_amount_of_occurances(city: &City, list_of_cities: &MultiMap<City, Cit
     return Some(list_of_cities.get_vec(&city).unwrap().len() as i32);
 }
 
-
 // Adhv een lijst met 10 steden, de steden aan elkaar linken, dit is nog niet perfect...
 pub fn connect_cities_randomly(list_of_cities: &[City<'static>]) -> Option<MultiMap<City<'static>, City<'static>>>
 {
     // Verbind steden op een random manier obv de lijst met steden die je hebt
-    // We weten dat combinaties (n-1)! is en dat er (n-1)+(n-2)... verbindingen zijn per combinatie
     let mut city_connections: MultiMap<City, City> = MultiMap::new();
 
+    let max_permissible_city_connections = ((get_max_possible_city_connections(list_of_cities.len() as i32) as f32) / 2.0).round() as i32;
     let max_permissible_connections_per_city = ((get_max_possible_city_connections(list_of_cities.len() as i32) as f32) / 4.0).round() as i32;
 
-    let (city1, city2) = make_random_city_connection(list_of_cities).unwrap();
-
-    // Als de lijst leeg is, voeg een connectie toe
-    if city_connections.is_empty()
-    {
-        if city1 != city2
+    { // Added scope to get rid of city1 and city2
+        let (city1, city2) = make_random_city_connection(list_of_cities).unwrap();
+    
+        // Als de lijst leeg is, voeg een connectie toe
+        if city_connections.is_empty()
         {
-            city_connections.insert(city1, city2);
+            if city1 != city2
+            {
+                city_connections.insert(city1, city2);
+            }
         }
     }
 
-    // we maken 20 connecties (0 TM 19)
-    for i in 0..20
+    // we maken (max connecties mogelijk / 2) connecties
+    for i in 0..max_permissible_city_connections
     {
         // We kunnen 2 dezelfde steden hebben, dus er moet een check bij komen
         let (mut city1, mut city2) = make_random_city_connection(list_of_cities).unwrap();
@@ -338,8 +341,16 @@ pub fn connect_cities_randomly(list_of_cities: &[City<'static>]) -> Option<Multi
                     // Connectie bestaat niet, city2 is niet verbonden met city1 (want hij is niet gevonden), dus connectie kan gemaakt worden
                     None => 
                     {
-                        city_connections.insert(city1, city2);
-                        break;
+                        if city1 != city2
+                        {
+                            city_connections.insert(city1, city2);
+                            break;
+                        }
+                        else 
+                        {
+                            city2 = return_random_city(list_of_cities).unwrap();
+                            continue; //inner of outer loop
+                        }
                     }
                 }
             }
@@ -354,11 +365,25 @@ pub fn connect_cities_randomly(list_of_cities: &[City<'static>]) -> Option<Multi
                     city_connections.insert(city1, city2);
                     break;
                 }
+                // Ze zijn aan elkaar gelijk en een moet aangepast worden
+                else 
+                {
+                    city2 = return_random_city(list_of_cities).unwrap();
+                }
             }
         }
     }
 
-    return None;
+    // Check of connecties zijn gemaakt en return de lijst
+    if !city_connections.is_empty()
+    {
+        return Some(city_connections);
+    }
+    else
+    {
+        return None;
+    }
+
 }
 
 pub fn print_list_of_cities(list_of_cities: &[City]) -> ()
@@ -373,6 +398,19 @@ pub fn print_city_connections(city_connections: &MultiMap<City<'static>, City<'s
 {
     for (key, values) in city_connections.iter_all() 
     {
-        println!("Stad: {:?} verbonden met ---> {:?}", key, values);
+        println!("Stad: {:?} verbonden met:", key);
+        for cities_connected in values
+        {
+            println!("    {:?}", cities_connected);
+        }
     }
 }
+
+//Nu kunnen we beginnen met:
+// A* search
+// Depth first search
+// Breadth first search
+// Dijkstra's algorithm
+
+
+// Nice to haves, visualiseren
