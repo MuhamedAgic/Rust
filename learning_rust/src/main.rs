@@ -33,6 +33,13 @@ fn main()
 
     print_city_connections(&city_connections.unwrap());
 
+    let options = eframe::NativeOptions::default();
+    eframe::run_native(
+        "My egui App",
+        options,
+        Box::new(|_cc| Box::new(search_algorithms::MyApp::default())),
+    );
+
 }
 
 

@@ -1,0 +1,14 @@
+c:\Users\Muhamed\Rust\learning_rust\target\debug\deps\ab_glyph-36d49c1bde29b5a6.rmeta: C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\ab_glyph-0.2.15\src\lib.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\ab_glyph-0.2.15\src\codepoint_ids.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\ab_glyph-0.2.15\src\err.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\ab_glyph-0.2.15\src\font.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\ab_glyph-0.2.15\src\font_arc.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\ab_glyph-0.2.15\src\glyph.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\ab_glyph-0.2.15\src\outlined.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\ab_glyph-0.2.15\src\scale.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\ab_glyph-0.2.15\src\ttfp.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\ab_glyph-0.2.15\src\ttfp\outliner.rs
+
+c:\Users\Muhamed\Rust\learning_rust\target\debug\deps\ab_glyph-36d49c1bde29b5a6.d: C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\ab_glyph-0.2.15\src\lib.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\ab_glyph-0.2.15\src\codepoint_ids.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\ab_glyph-0.2.15\src\err.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\ab_glyph-0.2.15\src\font.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\ab_glyph-0.2.15\src\font_arc.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\ab_glyph-0.2.15\src\glyph.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\ab_glyph-0.2.15\src\outlined.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\ab_glyph-0.2.15\src\scale.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\ab_glyph-0.2.15\src\ttfp.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\ab_glyph-0.2.15\src\ttfp\outliner.rs
+
+C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\ab_glyph-0.2.15\src\lib.rs:
+C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\ab_glyph-0.2.15\src\codepoint_ids.rs:
+C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\ab_glyph-0.2.15\src\err.rs:
+C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\ab_glyph-0.2.15\src\font.rs:
+C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\ab_glyph-0.2.15\src\font_arc.rs:
+C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\ab_glyph-0.2.15\src\glyph.rs:
+C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\ab_glyph-0.2.15\src\outlined.rs:
+C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\ab_glyph-0.2.15\src\scale.rs:
+C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\ab_glyph-0.2.15\src\ttfp.rs:
+C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\ab_glyph-0.2.15\src\ttfp\outliner.rs:
