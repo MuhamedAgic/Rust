@@ -756,6 +756,7 @@ dependencies = [
  "eframe",
  "egui",
  "epaint",
+ "js-sys",
  "libmath",
  "multimap",
  "rand 0.8.5",

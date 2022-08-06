@@ -132,25 +132,13 @@ pub fn linear_search(item_to_find: f32, list: &[f32]) -> Option<f32>
 // A* search
 
 
-
-pub struct Node<T>
-{
-    data: T
-}
-
-pub struct Layer<T>
-{
-    nodes: [Node<T>]
-}
-
 // ideeen:
 // - welke stad heeft grootste/kleinste populatie?
 // - welke stad heeft grootst/kleinst oppervlak?
 
 // Maak nodes die steden voorstellen, verbind de steden met elkaar, zoek naar een stad adhv zoek algoritmen
 
-// This debug attribute implements fmt::Debug which will allow us
-// to print the struct using {:?}
+// This debug attribute implements fmt::Debug which will allow us to print the struct using {:?}
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct City<'a>
 {

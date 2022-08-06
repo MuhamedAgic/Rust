@@ -1,18 +1,16 @@
 mod oefeningen;
 mod search_algorithms;
+mod deep_learning;
 
 pub use oefeningen::*;
 pub use search_algorithms::*;
-
-
-
-
+pub use deep_learning::*;
 
 fn main() 
 {
     println!("Hello, world!");
 
-    let _x = oefeningen::oefeningen::collatz_conjecture(27);
+    let _x = oefeningen::collatz_conjecture(27);
 
     // let _y = oefeningen::oefeningen::count_letter_occurances("..\\test.txt");
 
