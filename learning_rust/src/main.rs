@@ -6,6 +6,8 @@ pub use oefeningen::*;
 pub use search_algorithms::*;
 pub use deep_learning::*;
 
+use rand::{Rng};
+
 fn main() 
 {
     println!("Hello, world!");
@@ -24,6 +26,7 @@ fn main()
         let result_linear_search = search_algorithms::linear_search(i as f32, &list);
     }
 
+    // Cities
     let list_of_cities = get_list_of_random_cities();
     print_list_of_cities(&list_of_cities);
 
@@ -31,6 +34,21 @@ fn main()
 
     print_city_connections(&city_connections.unwrap());
 
+    // Neural network
+    let mut input_layer = [Node::new(); 10];
+    input_layer.iter_mut().for_each(|node| node.data = rand::thread_rng().gen_range(-5..10) as f64); 
+
+    println!("Input layer: {:?}", input_layer);
+    
+    ActivationFunctions::tanh(&mut input_layer);
+
+    println!("Input layer: {:?}", input_layer);
+
+    // TODO, gewichten en biasen toevoegen, en de nodes aan elkaar verbinden!
+
+
+
+    // GUI
     let options = eframe::NativeOptions::default();
     eframe::run_native(
         "My egui App",

@@ -1,9 +1,9 @@
+use num::pow;
 
-
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct Node
 {
-    data: f64
+    pub data: f64
 }
 
 impl Node
@@ -14,44 +14,85 @@ impl Node
     }
 }
 
+pub mod MathematicalFunctions
+{
+    use std::f64::consts::*;
+    use crate::Node;
+
+    pub fn sigmoid(input: f64) -> f64
+    {
+        return std::f64::consts::E.powf(input) / (std::f64::consts::E.powf(input) + 1.0);
+    }
+
+    pub fn relu(input: f64) -> f64
+    {
+        if input < 0.0
+        {
+            return 0.0;
+        }
+        return input;
+    }
+
+    pub fn binary_step(input: f64) -> f64
+    {
+        if input < 0.0
+        {
+            return 0.0;
+        }
+        return 1.0;
+    }
+}
 
 pub mod ActivationFunctions
 {
-    use crate::deep_learning::Node;
+    use crate::{Node, MathematicalFunctions};
+
+    // inputs: een lijst met nodes (een layer) en een functie (de activatie functie)
+    // Nog kijken hoe je dit kan gebruiken
+    pub fn apply_activation_function<F>(layer: &mut [Node], function: F) where F: Fn(f64) -> f64 
+    {
+        layer.iter_mut().for_each(|node| node.data = function(node.data));
+    }
 
     // Update the values of the nodes in the list
-    pub fn relu<T>(layer: &mut [Node]) -> ()
+    pub fn relu(layer: &mut [Node]) -> ()
     {
-        for i in 0..layer.len()
-        {
-            if layer[i].data < 0.0
-            {
-                layer[i].data = 0.0;
-            }
-        }
-    } 
-    
-    pub fn tanh<T>(layer: &mut [Node]) -> ()
-    {
-        //layer = layer.iter().map(|node| js_sys::Math::tanh(node.data)).collect();
-    } 
-
-    pub fn sigmoid<T>(layer: &mut [Node]) -> ()
-    {
-        todo!();
+        layer.iter_mut().for_each(|node| node.data = MathematicalFunctions::relu(node.data));
     }
+
+    pub fn sigmoid(layer: &mut [Node]) -> ()
+    {
+        layer.iter_mut().for_each(|node| node.data = MathematicalFunctions::sigmoid(node.data));
+    }
+
+    pub fn binary_step(layer: &mut [Node]) -> ()
+    {
+        layer.iter_mut().for_each(|node| node.data = MathematicalFunctions::binary_step(node.data));
+    }
+    
+    pub fn tanh(layer: &mut [Node]) -> ()
+    {
+        layer.iter_mut().for_each(|node| node.data = node.data.tanh());
+    } 
 
     //Probability
-    pub fn softmax<T>(layer: &mut [Node]) -> ()
+    pub fn softmax(layer: &mut [Node]) -> ()
     {
-        todo!();
-    }
+        let mut sum_of_e_powered_by_nodes = 0.0;
+        for node in layer.iter_mut()
+        {
+            sum_of_e_powered_by_nodes += std::f64::consts::E.powf(node.data);
+        }
 
-    pub fn binary_step<T>(layer: &mut [Node]) -> ()
-    {
-        todo!();
+        // We hebben de som van alle waarden van de nodes die de macht zijn van het getal e
+        // Nu de kans van elke node berekenen
+        for node in layer.iter_mut()
+        {
+            node.data = node.data/ sum_of_e_powered_by_nodes;
+        }
     }
-
 }
 
+
+// Rust essential: https://stackoverflow.com/questions/58254329/how-can-i-change-a-reference-to-an-owned-value-without-clone 
 
