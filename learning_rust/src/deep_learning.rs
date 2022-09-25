@@ -78,19 +78,24 @@ pub mod ActivationFunctions
     //Probability
     pub fn softmax(layer: &mut [Node]) -> ()
     {
-        let mut sum_of_e_powered_by_nodes = 0.0;
+        let mut sum_of_e_powered_by_values_of_nodes = 0.0;
         for node in layer.iter_mut()
         {
-            sum_of_e_powered_by_nodes += std::f64::consts::E.powf(node.data);
+            sum_of_e_powered_by_values_of_nodes += std::f64::consts::E.powf(node.data);
         }
 
         // We hebben de som van alle waarden van de nodes die de macht zijn van het getal e
         // Nu de kans van elke node berekenen
         for node in layer.iter_mut()
         {
-            node.data = node.data/ sum_of_e_powered_by_nodes;
+            node.data = node.data/ sum_of_e_powered_by_values_of_nodes;
         }
     }
+}
+
+pub fn fully_connect_layers() -> ()
+{
+    todo!();
 }
 
 

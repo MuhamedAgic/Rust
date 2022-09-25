@@ -1,10 +1,12 @@
 mod oefeningen;
 mod search_algorithms;
 mod deep_learning;
+mod egui;
 
 pub use oefeningen::*;
 pub use search_algorithms::*;
 pub use deep_learning::*;
+pub use crate::egui::*;
 
 use rand::{Rng};
 
@@ -40,7 +42,7 @@ fn main()
 
     println!("Input layer: {:?}", input_layer);
     
-    ActivationFunctions::tanh(&mut input_layer);
+    ActivationFunctions::binary_step(&mut input_layer);
 
     println!("Input layer: {:?}", input_layer);
 
@@ -53,7 +55,7 @@ fn main()
     eframe::run_native(
         "My egui App",
         options,
-        Box::new(|_cc| Box::new(search_algorithms::MyApp::default())),
+        Box::new(|_cc| Box::new(egui::MyApp::default())),
     );
 
 }

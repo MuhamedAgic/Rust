@@ -9,15 +9,12 @@
 extern crate multimap;
 
 use colored::*;
-use eframe::epaint::CircleShape;
-use epaint::Stroke;
 use rand::{Rng};
 use core::panic;
 use multimap::MultiMap;
 use std::{marker::Copy, ops::RangeBounds};
 use std::ops::Range;
-use eframe::egui;
-use egui::RichText;
+
 
 // Helper functie
 fn make_even(input_number: f32, add_one: bool) -> f32
@@ -146,6 +143,7 @@ pub struct City<'a>
     name: &'a str ,
     popuation: u64,
     area: u64,          //m^2
+    amountOfConnections: u32
 }
 
 impl<'a> City<'a>
@@ -158,7 +156,8 @@ impl<'a> City<'a>
             id: 0,
             name: "0",
             popuation: 0,
-            area: 0
+            area: 0,
+            amountOfConnections: 0
         }
     }
 }
@@ -209,7 +208,8 @@ pub fn get_list_of_random_cities() -> [City<'static>; 10]
                 id: i as u64, 
                 name: list_of_city_names[exclusive_random(0, list_of_city_names.len().try_into().unwrap(), &list_of_added_cities_indexes).unwrap() as usize], 
                 popuation: rand::thread_rng().gen_range(10..1000000), 
-                area: rand::thread_rng().gen_range(100..5000000)
+                area: rand::thread_rng().gen_range(100..5000000),
+                amountOfConnections: 0
             }
         };
         list_of_added_cities_indexes[i] = list_of_city_names
@@ -289,6 +289,12 @@ pub fn get_amount_of_occurances(city: &City, list_of_city_connections: &MultiMap
     return Some(list_of_city_connections.get_vec(&city).unwrap().len() as i32);
 }
 
+pub fn increase_connection_amount(city1: &mut City, city2: &mut City) -> ()
+{
+    city1.amountOfConnections += 1;
+    city2.amountOfConnections += 1;
+}
+
 pub fn make_first_city_connection(list_of_cities: &[City<'static>], list_of_city_connections: &mut MultiMap<City, City>) -> ()
 {
     let (city1, city2) = make_random_city_connection(list_of_cities).unwrap();
@@ -297,6 +303,7 @@ pub fn make_first_city_connection(list_of_cities: &[City<'static>], list_of_city
         if city1 != city2
         {
             list_of_city_connections.insert(city1, city2);
+            increase_connection_amount(&mut city1, &mut city2);
         }
     }
 }
@@ -304,6 +311,7 @@ pub fn make_first_city_connection(list_of_cities: &[City<'static>], list_of_city
 // Adhv een lijst met 10 steden, de steden aan elkaar linken
 // TODO: code stijl optimaliseren, code wordt vaak herhaald
 // TODO: dubbele bindingen weghalen (of juist laten staan?)
+// TODOL boomstructuur maken en niet compleet random....
 pub fn connect_cities_randomly(list_of_cities: &[City<'static>]) -> Option<MultiMap<City<'static>, City<'static>>>
 {
     // Verbind steden op een random manier obv de lijst met steden die je hebt
@@ -356,6 +364,7 @@ pub fn connect_cities_randomly(list_of_cities: &[City<'static>]) -> Option<Multi
                         if city1 != city2
                         {
                             city_connections.insert(city1, city2);
+                            increase_connection_amount(&mut city1, &mut city2);
                             continue 'outer;
                         }
                         else 
@@ -375,6 +384,7 @@ pub fn connect_cities_randomly(list_of_cities: &[City<'static>]) -> Option<Multi
                 if city1 != city2
                 {
                     city_connections.insert(city1, city2);
+                    increase_connection_amount(&mut city1, &mut city2);
                     continue 'outer;
                 }
                 // Ze zijn aan elkaar gelijk en een moet aangepast worden
@@ -419,79 +429,79 @@ pub fn print_city_connections(city_connections: &MultiMap<City<'static>, City<'s
     }
 }
 
-//Nu kunnen we beginnen met:
+// Zoekalgoritmen voor node structuren
+// Return indien gevonden de stad
+
 // A* search
-// Depth first search
-// Breadth first search
-// Dijkstra's algorithm
-
-
-// Nice to haves, visualiseren
-
-pub struct MyApp 
+pub fn a_star_search(city_connections: &MultiMap<City<'static>, City<'static>>) -> Option<City<'static>>
 {
-    name: String,
-    age: u32,
+    todo!();
 }
 
-impl Default for MyApp 
+// Depth first search
+pub fn depth_first_search(city_connections: &MultiMap<City<'static>, City<'static>>) -> Option<City<'static>>
 {
-    fn default() -> Self 
+    todo!();
+    // Begin bij de stad met de meeste connecties
+    // Neem een connectie, is het die niet, dan nemen we weer een connectie
+}
+
+// Breadth first search
+// Dit is super inefficient, want we gaan alles langs met een iterator
+// Maar het gaat om het idee...
+// Beter om met tree levels te werken en simpele checks
+pub fn breadth_first_search(city_to_find: &City, city_connections: &MultiMap<City<'static>, City<'static>>) -> Option<City<'static>>
+{
+    // Begin bij de stad met de meeste connecties
+    let start_city = city_connections
+                                            .iter()
+                                            .max_by_key(|city_connection| city_connection.0.amountOfConnections);
+    match start_city
     {
-        Self 
+        Some((&City1, &City2)) =>
         {
-            name: "Muhamed".to_owned(),
-            age: 21,
+            if &City1 == city_to_find
+            {
+                return Some(*(start_city.unwrap().0));
+            }
+        }
+        None =>
+        {
+            println!("Kon geen breath first search doen, steden hebben geen connecties (dit zou niet mogen kunnen)!");
+            return None;
         }
     }
-}
 
+    // Neem een connectie, is het die niet, dan nemen de volgende connectie van de stad waarmee we beginnen
+    let a_connection_with_start_city = city_connections
+                                                                .iter()
+                                                                .find(|city_connection| city_connection.0 == start_city.unwrap().0 && city_connection.1 == city_to_find);
 
-struct eguiCircle
-{
-    shape: epaint::CircleShape
-}
-
-
-impl egui::Widget for &mut eguiCircle
-{
-    fn ui(self, ui: &mut egui::Ui) -> egui::Response 
-    { 
-        // Teken de cirkel op het scherm
-        let circle_shape = egui::Shape::circle_stroke(
-            epaint::Pos2{x: self.shape.center.x ,y: self.shape.center.y}, 
-            self.shape.radius, 
-            self.shape.stroke
-        );
-
-        todo!(); //TODO: return response
-    }
-}
-
-
-impl eframe::App for MyApp 
-{
-    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) 
+    match a_connection_with_start_city
     {
-        egui::CentralPanel::default().show(ctx, |ui| 
+        Some((&city1, &city2)) =>
         {
-            ui.heading("My egui Application");
-            ui.horizontal(|ui| 
-            {
-                ui.label("Your name: ");
-                ui.text_edit_singleline(&mut self.name);
-            });
-
-            ui.add(egui::Slider::new(&mut self.age, 0..=120).text("age"));
-
-            if ui.button("Click each year").clicked() 
-            {
-                self.age += 1;
-            }
-            ui.label(format!("Hello '{}', age {}", self.name, self.age));
-
-            // Elke stad is nu een button... Moet nog een cirkel widget maken        
-
-        });
+            // Gevonden
+        }
+        None =>
+        {
+            // breadth_firtst_search(city_to_find, starting_point_city) maar starting point wordt dan de eerste stad die verbonden is met de bovenliggende stad
+            // toch een boomstructuur en niet compleet random maken...
+        }
     }
+
+    // Zijn het ze allemaal niet? dan gaan we een connectie dieper en beginnen we bij de eerste connectie van de stad waarmee we begonnen zijn
+
+
+
+
+    //Als niet gevonden
+    return None;
+
+}
+
+// Dijkstra's algorithm
+pub fn dijkstras_algorithm(city_connections: &MultiMap<City<'static>, City<'static>>) -> Option<City<'static>>
+{
+    todo!();
 }
