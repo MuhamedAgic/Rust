@@ -143,7 +143,7 @@ pub struct City<'a>
     name: &'a str ,
     popuation: u64,
     area: u64,          //m^2
-    amountOfConnections: u32
+    amount_of_connections: u32
 }
 
 impl<'a> City<'a>
@@ -157,7 +157,7 @@ impl<'a> City<'a>
             name: "0",
             popuation: 0,
             area: 0,
-            amountOfConnections: 0
+            amount_of_connections: 0
         }
     }
 }
@@ -173,7 +173,7 @@ impl<'a> City<'a>
 // Maar 2 niet weer verbinden met 1, dus het is (n-1)! aantal COMBINATIES (dat is ongelijk aanhet aantal verbindingen per combinatie -> (n-1)+(n-2)...(n-(n-1)))
 // Want: 1 verbinden met andere 9, maar dat kan elke 1 zijn die verbind met 9 dus 10 combinaties mogelijk waarbij de eerste verbind met de andere 9
 // De 2e die verbind met 8 andere etc
-pub fn get_list_of_random_cities() -> [City<'static>; 10]
+pub fn get_list_of_random_cities() -> [City<'static>; 15]
 {
     let list_of_city_names = [
         "Amsterdam",
@@ -197,8 +197,8 @@ pub fn get_list_of_random_cities() -> [City<'static>; 10]
     ];
 
     // wat irritant is dit...
-    let mut list_of_random_cities = [City::new(); 10];
-    let mut list_of_added_cities_indexes: [i32; 10] = [0; 10];
+    let mut list_of_random_cities = [City::new(); 15];
+    let mut list_of_added_cities_indexes: [i32; 15] = [0; 15];
     for i in 0..10
     {
         list_of_random_cities[i] = 
@@ -209,7 +209,7 @@ pub fn get_list_of_random_cities() -> [City<'static>; 10]
                 name: list_of_city_names[exclusive_random(0, list_of_city_names.len().try_into().unwrap(), &list_of_added_cities_indexes).unwrap() as usize], 
                 popuation: rand::thread_rng().gen_range(10..1000000), 
                 area: rand::thread_rng().gen_range(100..5000000),
-                amountOfConnections: 0
+                amount_of_connections: 0
             }
         };
         list_of_added_cities_indexes[i] = list_of_city_names
@@ -284,20 +284,16 @@ pub fn get_max_possible_city_connections(amount_of_cities: i32) -> i32
     return amount_possible_connections;
 }
 
-pub fn get_amount_of_occurances(city: &City, list_of_city_connections: &MultiMap<City, City>) -> Option<i32>
-{
-    return Some(list_of_city_connections.get_vec(&city).unwrap().len() as i32);
-}
-
 pub fn increase_connection_amount(city1: &mut City, city2: &mut City) -> ()
 {
-    city1.amountOfConnections += 1;
-    city2.amountOfConnections += 1;
+    city1.amount_of_connections += 1;
+    city2.amount_of_connections += 1;
 }
 
+// TODO, deze checken, eerste connectie kan ook niet gemaakt worden
 pub fn make_first_city_connection(list_of_cities: &[City<'static>], list_of_city_connections: &mut MultiMap<City, City>) -> ()
 {
-    let (city1, city2) = make_random_city_connection(list_of_cities).unwrap();
+    let (mut city1, mut city2) = make_random_city_connection(list_of_cities).unwrap();
     if list_of_city_connections.is_empty()
     {
         if city1 != city2
@@ -334,9 +330,7 @@ pub fn connect_cities_randomly(list_of_cities: &[City<'static>]) -> Option<Multi
             if city_connections.contains_key(&city1)
             {
                 // Als het max aantal conecties dat een stad heeft gemaakt overschreden zijn...
-                let connections_with_city1 = get_amount_of_occurances(&city1, &city_connections).unwrap();
-
-                if connections_with_city1 > max_permissible_connections_per_city
+                if city1.amount_of_connections > max_permissible_connections_per_city as u32
                 {
                     // City 1 aanpassen
                     city1 = return_random_city(list_of_cities).unwrap();
@@ -409,6 +403,77 @@ pub fn connect_cities_randomly(list_of_cities: &[City<'static>]) -> Option<Multi
 
 }
 
+pub fn make_city_tree_structure(list_of_cities: &[City<'static>]) -> Option<MultiMap<City<'static>, City<'static>>>
+{
+    let city_connections_tree_structure: MultiMap<City, City> = MultiMap::new();
+    let top_city = return_random_city(&list_of_cities).unwrap();
+
+    // while cities ! op gemaakt
+    let counter = 0;
+    while counter < list_of_cities.len()
+    {
+        // 1 tot 3 connecties maken met een stad
+        let connections_with_city_above = rand::thread_rng().gen_range(1..3);
+    
+        for i in 0..connections_with_city_above
+        {
+            // Deze stad moeten we verbinden met destad erboven (boomstructuur)
+            let mut city_to_connect = return_random_city(&list_of_cities).unwrap();            
+        }
+    }
+    todo!();
+}
+
+pub fn binary_tree_connect_first_two(list_of_cities: &[City<'static>], city_connections_tree_structure: &mut MultiMap<City, City>, counter: &mut i32) -> ((City<'static>, City<'static>))
+{
+    // Deze snap ik niet zo...
+    let top_tree_city = list_of_cities.get((*counter) as usize).unwrap().clone();
+
+    let city1_to_connect_with_above = list_of_cities.get((*counter + 1) as usize).unwrap().clone();
+    let city2_to_connect_with_above = list_of_cities.get((*counter + 2) as usize).unwrap().clone();
+
+    city_connections_tree_structure.insert(top_tree_city, city1_to_connect_with_above);
+    city_connections_tree_structure.insert(top_tree_city, city2_to_connect_with_above);
+
+    *counter += 2;
+
+    return (city1_to_connect_with_above, city2_to_connect_with_above);
+}
+
+pub fn make_city_binary_tree(list_of_cities: &[City<'static>]) -> Option<MultiMap<City<'static>, City<'static>>>
+{
+    let mut city_connections_tree_structure: MultiMap<City, City> = MultiMap::new();
+
+    let mut cities_included_in_tree = list_of_cities.len() as f32;
+    cities_included_in_tree = make_even(cities_included_in_tree, false);
+
+    // While cities niet op gemaakt
+    let mut counter = 0;
+
+    // TODO, hier een lijst terug kijgen met de nieuwe top cities
+    // Door die lijst heen lopen om de volgende steden eronder te verbinden.
+    let new_top_cities = binary_tree_connect_first_two(&list_of_cities, &mut city_connections_tree_structure, &mut counter);
+    while counter < cities_included_in_tree as i32
+    {   
+        // Deze stad moeten we verbinden met de stad erboven (boomstructuur)
+        let city1_to_connect_with_above = list_of_cities.get((counter + 1) as usize).unwrap().clone();
+        let city2_to_connect_with_above = list_of_cities.get((counter + 2) as usize).unwrap().clone();
+
+        city_connections_tree_structure.insert(new_top_cities.0, city1_to_connect_with_above);
+        city_connections_tree_structure.insert(new_top_cities.1, city2_to_connect_with_above);
+        counter += 2;
+    }
+
+    println!("Made binary tree of cities!");
+    
+    todo!();
+
+
+
+
+
+}
+
 pub fn print_list_of_cities(list_of_cities: &[City]) -> ()
 {
     for i in 0..list_of_cities.len()
@@ -455,7 +520,7 @@ pub fn breadth_first_search(city_to_find: &City, city_connections: &MultiMap<Cit
     // Begin bij de stad met de meeste connecties
     let start_city = city_connections
                                             .iter()
-                                            .max_by_key(|city_connection| city_connection.0.amountOfConnections);
+                                            .max_by_key(|city_connection| city_connection.0.amount_of_connections);
     match start_city
     {
         Some((&City1, &City2)) =>
