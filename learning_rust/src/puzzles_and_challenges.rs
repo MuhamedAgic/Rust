@@ -12,15 +12,6 @@ use core::str::CharIndices;
 // CHALLENGE: start with "mi"
 // Make transformations such that you end with "mu"
 
-#[derive(Debug)]
-pub enum Rules
-{
-    add_u_after_i = 0,
-    change_three_is_to_u = 1,
-    duplicate_everything_after_m = 2,
-    delete_2_successive_us = 3
-}
-
 // returns where x successive chars are in a string slice
 // for example: get succesive uu's in "miiuiuuiimiuu" would return  ('u',[[5, 6], [11, 12]])
 pub fn has_this_amount_successive_chars(chars_in_element: &mut CharIndices, char_to_look_for: &char, x_in_a_row: u32) -> bool
@@ -33,7 +24,7 @@ pub fn has_this_amount_successive_chars(chars_in_element: &mut CharIndices, char
            count += 1;
         }
     }
-    // Weer x aantal plaatsen terug gaan
+    // Weer x aantal plaatsen terug gaan, want we lenen de lijst
     chars_in_element.rev();
     for i in 0..x_in_a_row
     {
@@ -73,54 +64,107 @@ pub fn return_occurances_and_indices_of(element: &str, char_to_find: char, x_in_
     return Some(char_indices);
 }
 
-pub fn check_rules_to_apply(element: &str) -> [bool; 4]
+// Geen zin om iets generieks te maken
+pub fn apply_iii_rule_on_element(element: &str, indices_of_rule_to_apply: Option<Vec<usize>>, collection: &HashSet<&str>) -> ()
+{
+    // voor elke index, pas regel toe
+    if indices_of_rule_to_apply == None
+    {
+        return;
+    }
+
+    let mut newElement = ""; 
+    for i in 0..indices_of_rule_to_apply.unwrap().len()
+    {
+        // vervang eerste i met een u en verwijder de andere 2 i's
+        newElement = element.replace_range(i..i+2, "u");
+    }
+
+    // voeg new element toe aan de lijst
+    collection.insert(newElement);
+}
+
+pub fn apply_uu_rule_on_element(element: &str, indices_of_rule_to_apply: Option<Vec<usize>>, collection: &HashSet<&str>) -> ()
+{
+    // voor elke index, pas regel toe
+    if indices_of_rule_to_apply == None
+    {
+        return;
+    }
+
+    let mut newElement = ""; 
+    for i in 0..indices_of_rule_to_apply.unwrap().len()
+    {
+        newElement = element.replace_range(i..i+1, "");
+    }
+
+    collection.insert(newElement);
+}
+
+// Niet oneindig grote strings maken
+pub fn apply_mx_rule_on_element(element: &str, indices_of_rule_to_apply: Option<Vec<usize>>, collection: &HashSet<&str>) -> ()
+{
+    // voor elke index, pas regel toe
+    if indices_of_rule_to_apply == None
+    {
+        return;
+    }
+
+    let mut newElement = ""; 
+    for i in 0..indices_of_rule_to_apply.unwrap().len()
+    {
+        // voegt zichzelf toe zonder eerste char (next gaat een plek vooruit)
+        newElement = element + element.chars().next().as_str();
+    }
+
+    collection.insert(newElement);
+}
+
+pub fn apply_mi_mu_rules(element: &str, collection: &HashSet<&str>) -> ()
 {
     let rules_to_apply = [false, false, false, false];
     // If a string ends with 'I', 'U' can be added ('MI' can be changed to 'MIU')
     if element.ends_with('i')
     {
-        //rules_to_apply[Rules::add_u_after_i] = true;
+        let newElement = [element, "u"].concat();
+        collection.insert(newElement);
     }
 
     // Three 'I's in succession can be changed to a 'U' ('MUIII' can be changed to 'MUU')
     let iii_indices: Option<Vec<usize>> = return_occurances_and_indices_of(element, 'i', 3);
     if iii_indices != None
     {
-        //rules_to_apply[Rules::change_three_is_to_u] = true;
-
+        apply_iii_rule_on_element(element, iii_indices, collection);
     }
 
     // The string 'Mx' (where x is any sequence of letters) can be changed to 'Mxx' ('MUIU' can be changed to 'MUIUUIU')
     let m_indices: Option<Vec<usize>> = return_occurances_and_indices_of(element, 'm', 1);
     if m_indices != None
     {
-        //rules_to_apply[Rules::duplicate_everything_after_m] = true;
+        apply_mx_rule_on_element(element, m_indices, collection);
     }
 
     // Two 'U's in succession can be deleted ('MIUU' can be changed to 'MI')
     let uu_indices: Option<Vec<usize>> = return_occurances_and_indices_of(element, 'u', 2);
     if uu_indices != None
     {
-        //rules_to_apply[Rules::delete_2_successive_us] = true;
+        apply_uu_rule_on_element(element, uu_indices, collection);
     }
-
-
-    return rules_to_apply;
-
-    todo!();
-
 }
+
 
 pub fn apply_mi_mu_possibilities(collection: &HashSet<&str>) -> ()
 {
     // loop door de lijst
     // voor elk element, check welke regels gelden
     // maak nieuwe elementen adhv die regels (insert de nieuwe)
-    let mut rules_to_apply = [false, false, false, false];
     collection.into_iter()
-              .for_each(|element| rules_to_apply = check_rules_to_apply(element)); // en ook uitprinten
+              .for_each(|element| apply_mi_mu_rules(element, collection)); // en ook uitprinten
+
+    // Voeg element toe aan de lijst, verwijder oud element als het geen mu is, TODO
               
     todo!();
+
 }
 
 pub fn mi_to_mu() -> ()
@@ -143,7 +187,7 @@ pub fn mi_to_mu() -> ()
 
     // check voor elk element de regels die toegepast kunnen worden en pas ze toe
     // voeg het item waar je de regels op controlleert en toepast toe aan de rules applied collectie
-    // dat elemant hebben we dan gehad
+    // dat elemant hebben we dan gehad, dan kan je hem verwijderen als het geen mu is
 
     while !collection.contains("mu")
     {
