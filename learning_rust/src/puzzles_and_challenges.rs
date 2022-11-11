@@ -104,6 +104,12 @@ pub fn apply_iii_rule_on_element(element: &str,
             collection.insert(newElement);
         }
     }
+
+    // Combinaties zijn gemaakt, als element geen mu, weggoien uit lijst
+    if element != "mu"
+    {
+        collection.remove(element);
+    }
 }
 
 pub fn apply_uu_rule_on_element(element: &str, 
@@ -127,11 +133,16 @@ pub fn apply_uu_rule_on_element(element: &str,
             collection.insert(newElement);
         }
     }
+
+    // Combinaties zijn gemaakt, als element geen mu, weggoien uit lijst
+    if element != "mu"
+    {
+        collection.remove(element);
+    }
 }
 
 // Niet oneindig grote strings maken
 pub fn apply_mx_rule_on_element(element: &str, collection: &HashSet<&str>) -> ()
-
 {
     // voor elke index, pas regel toe
     if indices_of_rule_to_apply == None
