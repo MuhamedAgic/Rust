@@ -1,6 +1,7 @@
 use std::collections::HashSet;
 use std::vec::Vec;
 use core::str::CharIndices;
+use combinations::Combinations;
 
 // mu puzzle
 // Rules and possibilities:
@@ -45,7 +46,7 @@ pub fn return_occurances_and_indices_of(element: &str, char_to_find: char, x_in_
 {
     let mut char_indices = Vec::new();
     let mut chars = element.char_indices();
-    let mut chars_copy = element.char_indices(); // Bewust een kopie
+    let mut chars_copy = element.char_indices(); // Bewust een kopie van element
 
     chars.into_iter()
          .for_each(|index_char_tuple| if index_char_tuple.1 == char_to_find 
@@ -64,27 +65,50 @@ pub fn return_occurances_and_indices_of(element: &str, char_to_find: char, x_in_
     return Some(char_indices);
 }
 
-// Geen zin om iets generieks te maken
-pub fn apply_iii_rule_on_element(element: &str, indices_of_rule_to_apply: Option<Vec<usize>>, collection: &HashSet<&str>) -> ()
+pub fn get_combination_posibilities(indexes_to_apply_rule: Vec<usize>) -> Vec<Combinations>
 {
-    // voor elke index, pas regel toe
-    if indices_of_rule_to_apply == None
+    // vb -> [  [1], [2], [3], [1, 2], [2, 3], [1, 2, 3]  ]
+    let mut all_combinations_to_apply_rule_on_index = Vec<Combinations>::new(); // Lijst met combinaties
+    let possible_combinations_of_combinations = indexes_to_apply_rule.len();
+
+    for i in 0..indexes_to_apply_rule
     {
-        return;
+        // we beginnen met [ [1], [2], [3] ], stap 2 wordt [ [1], [2], [3], [1, 2], [2, 3] ], etc...
+        let mut possible_indexes_to_apply_rules = Combinations::new(indexes_to_apply_rule, i);
+        all_combinations_to_apply_rule_on_index.insert(possible_indexes_to_apply_rules);
     }
 
-    let mut newElement = ""; 
-    for i in 0..indices_of_rule_to_apply.unwrap().len()
-    {
-        // vervang eerste i met een u en verwijder de andere 2 i's
-        newElement = element.replace_range(i..i+2, "u");
-    }
-
-    // voeg new element toe aan de lijst
-    collection.insert(newElement);
+    return all_combinations_to_apply_rule_on_index;
 }
 
-pub fn apply_uu_rule_on_element(element: &str, indices_of_rule_to_apply: Option<Vec<usize>>, collection: &HashSet<&str>) -> ()
+// Geen zin om iets generieks te maken
+pub fn apply_iii_rule_on_element(element: &str, 
+                                 collection: &HashSet<&str>, 
+                                 combinations_to_make: &Vec<Combinations>) -> ()
+{
+    if indices_of_rule_to_apply == None
+    {
+        return;
+    }
+
+    // Loop van 1 tm i AANTAL elementen in de combinatie lijst, dus [ [a], [a, b], [a, b, c] ]
+    for i in 0..combinations_to_make.unwrap().len()
+    {
+        // Loop per combinatie lijst en maak de combinaties, dus voor 2 -> [ [a, b], [b, c] ] etc
+        for j in 0..combinations_to_make[i].len()
+        {
+            let mut newElement = ""; 
+
+            // vervang eerste i met een u en verwijder de andere 2 i's
+            newElement = element.replace_range(combinations_to_make[i][j]..combinations_to_make[i][j] + 2, "u");
+            collection.insert(newElement);
+        }
+    }
+}
+
+pub fn apply_uu_rule_on_element(element: &str, 
+                                collection: &HashSet<&str>, 
+                                combinations_to_make: &Vec<Combinations>) -> ()
 {
     // voor elke index, pas regel toe
     if indices_of_rule_to_apply == None
@@ -92,17 +116,22 @@ pub fn apply_uu_rule_on_element(element: &str, indices_of_rule_to_apply: Option<
         return;
     }
 
-    let mut newElement = ""; 
-    for i in 0..indices_of_rule_to_apply.unwrap().len()
+    // Loop van 1 tm i AANTAL elementen in de combinatie lijst, dus [ [a], [a, b], [a, b, c] ]
+    for i in 0..combinations_to_make.unwrap().len()
     {
-        newElement = element.replace_range(i..i+1, "");
+        // Loop per combinatie lijst en maak de combinaties, dus voor 2 -> [ [a, b], [b, c] ] etc
+        for j in 0..combinations_to_make[i].len()
+        {
+            let mut newElement = ""; 
+            newElement = element.replace_range(combinations_to_make[i][j]..combinations_to_make[i][j] + 1, "");
+            collection.insert(newElement);
+        }
     }
-
-    collection.insert(newElement);
 }
 
 // Niet oneindig grote strings maken
-pub fn apply_mx_rule_on_element(element: &str, indices_of_rule_to_apply: Option<Vec<usize>>, collection: &HashSet<&str>) -> ()
+pub fn apply_mx_rule_on_element(element: &str, collection: &HashSet<&str>) -> ()
+
 {
     // voor elke index, pas regel toe
     if indices_of_rule_to_apply == None
@@ -111,7 +140,7 @@ pub fn apply_mx_rule_on_element(element: &str, indices_of_rule_to_apply: Option<
     }
 
     let mut newElement = ""; 
-    for i in 0..indices_of_rule_to_apply.unwrap().len()
+    for i in 0..combinations_to_make.unwrap().len()
     {
         // voegt zichzelf toe zonder eerste char (next gaat een plek vooruit)
         newElement = element + element.chars().next().as_str();
@@ -122,7 +151,14 @@ pub fn apply_mx_rule_on_element(element: &str, indices_of_rule_to_apply: Option<
 
 pub fn apply_mi_mu_rules(element: &str, collection: &HashSet<&str>) -> ()
 {
-    let rules_to_apply = [false, false, false, false];
+    // The string 'Mx' (where x is any sequence of letters) can be changed to 'Mxx' ('MUIU' can be changed to 'MUIUUIU')
+    // M heb je alleen aan het begin, dus dit is semi nutteloos
+
+    // We willen niet verdubbelen als er meer dan 2049 characters erin gaan zitten
+    // TODO, kijk naar de grootste string, als die groter is dan 1000 niet verdubbelen
+    let combinations_to_apply_rule = get_combination_posibilities(m_indices);
+    apply_mx_rule_on_element(element, collection);
+    
     // If a string ends with 'I', 'U' can be added ('MI' can be changed to 'MIU')
     if element.ends_with('i')
     {
@@ -134,22 +170,22 @@ pub fn apply_mi_mu_rules(element: &str, collection: &HashSet<&str>) -> ()
     let iii_indices: Option<Vec<usize>> = return_occurances_and_indices_of(element, 'i', 3);
     if iii_indices != None
     {
-        apply_iii_rule_on_element(element, iii_indices, collection);
+        // Get all possible combinations that can be made of element for this rule
+        let combinations_to_apply_rule = get_combination_posibilities(iii_indices);
+        apply_iii_rule_on_element(element, collection, &combinations_to_apply_rule);
     }
 
-    // The string 'Mx' (where x is any sequence of letters) can be changed to 'Mxx' ('MUIU' can be changed to 'MUIUUIU')
-    let m_indices: Option<Vec<usize>> = return_occurances_and_indices_of(element, 'm', 1);
-    if m_indices != None
-    {
-        apply_mx_rule_on_element(element, m_indices, collection);
-    }
 
     // Two 'U's in succession can be deleted ('MIUU' can be changed to 'MI')
     let uu_indices: Option<Vec<usize>> = return_occurances_and_indices_of(element, 'u', 2);
     if uu_indices != None
     {
-        apply_uu_rule_on_element(element, uu_indices, collection);
+        // Get all possible combinations that can be made of element for this rule
+        let combinations_to_apply_rule = get_combination_posibilities(uu_indices);
+        apply_uu_rule_on_element(element, collection, &combinations_to_apply_rule);
     }
+
+    // We zijn klaar met het element verwijder hem uit de lijst
 }
 
 
