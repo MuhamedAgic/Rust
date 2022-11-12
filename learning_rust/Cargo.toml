@@ -10,6 +10,9 @@ edition = "2021"
 num = "0.4.0"
 libmath = "0.2.1"
 
+#combinations
+combinations = "0.1.0"
+
 # visualization
 colored = "2.0.0"
 
