@@ -1,0 +1,12 @@
+c:\Users\Muhamed\Rust\learning_rust\target\debug\deps\actix_connect-fc6a82f1f4425e20.rmeta: C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\actix-connect-0.2.5\src/lib.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\actix-connect-0.2.5\src\connect.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\actix-connect-0.2.5\src\connector.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\actix-connect-0.2.5\src\error.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\actix-connect-0.2.5\src\resolver.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\actix-connect-0.2.5\src\service.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\actix-connect-0.2.5\src\ssl\mod.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\actix-connect-0.2.5\src\uri.rs
+
+c:\Users\Muhamed\Rust\learning_rust\target\debug\deps\actix_connect-fc6a82f1f4425e20.d: C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\actix-connect-0.2.5\src/lib.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\actix-connect-0.2.5\src\connect.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\actix-connect-0.2.5\src\connector.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\actix-connect-0.2.5\src\error.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\actix-connect-0.2.5\src\resolver.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\actix-connect-0.2.5\src\service.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\actix-connect-0.2.5\src\ssl\mod.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\actix-connect-0.2.5\src\uri.rs
+
+C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\actix-connect-0.2.5\src/lib.rs:
+C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\actix-connect-0.2.5\src\connect.rs:
+C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\actix-connect-0.2.5\src\connector.rs:
+C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\actix-connect-0.2.5\src\error.rs:
+C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\actix-connect-0.2.5\src\resolver.rs:
+C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\actix-connect-0.2.5\src\service.rs:
+C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\actix-connect-0.2.5\src\ssl\mod.rs:
+C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\actix-connect-0.2.5\src\uri.rs:

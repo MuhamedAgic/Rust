@@ -1,0 +1,11 @@
+c:\Users\Muhamed\Rust\learning_rust\target\debug\deps\tokio_executor-8af3eec17afca761.rmeta: C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\tokio-executor-0.1.10\src\lib.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\tokio-executor-0.1.10\src\enter.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\tokio-executor-0.1.10\src\error.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\tokio-executor-0.1.10\src\executor.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\tokio-executor-0.1.10\src\global.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\tokio-executor-0.1.10\src\park.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\tokio-executor-0.1.10\src\typed.rs
+
+c:\Users\Muhamed\Rust\learning_rust\target\debug\deps\tokio_executor-8af3eec17afca761.d: C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\tokio-executor-0.1.10\src\lib.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\tokio-executor-0.1.10\src\enter.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\tokio-executor-0.1.10\src\error.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\tokio-executor-0.1.10\src\executor.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\tokio-executor-0.1.10\src\global.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\tokio-executor-0.1.10\src\park.rs C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\tokio-executor-0.1.10\src\typed.rs
+
+C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\tokio-executor-0.1.10\src\lib.rs:
+C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\tokio-executor-0.1.10\src\enter.rs:
+C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\tokio-executor-0.1.10\src\error.rs:
+C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\tokio-executor-0.1.10\src\executor.rs:
+C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\tokio-executor-0.1.10\src\global.rs:
+C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\tokio-executor-0.1.10\src\park.rs:
+C:\Users\Edin\.cargo\registry\src\github.com-1ecc6299db9ec823\tokio-executor-0.1.10\src\typed.rs:

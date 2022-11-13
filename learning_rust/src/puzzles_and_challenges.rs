@@ -2,6 +2,7 @@ use std::collections::HashSet;
 use std::vec::Vec;
 use core::str::CharIndices;
 use combinations::Combinations;
+use std::clone;
 
 // mu puzzle
 // Rules and possibilities:
@@ -81,19 +82,30 @@ pub fn get_combination_posibilities(indexes_to_apply_rule: &Vec<usize>) -> Vec<C
     return all_combinations_to_apply_rule_on_index;
 }
 
+impl<T> Clone for Combinations<T> 
+{
+    fn clone(&self) -> Self 
+    {
+        return *self;
+    }
+}
+
 // Geen zin om iets generieks te maken
 pub fn apply_iii_rule_on_element<'a>(element: &'a str, 
                                      collection: &HashSet<&'a str>, 
                                      combinations_to_make: &Vec<Combinations<usize>>) -> ()
 {
+
+    let combinations2 = combinations_to_make;
+
     // Loop van 1 tm i AANTAL elementen in de combinatie lijst, dus [ [a], [a, b], [a, b, c] ]
     for i in 0..combinations_to_make.len()
     {
         // Loop per combinatie lijst en maak de combinaties, dus voor 2 -> [ [a, b], [b, c] ] etc
-        for j in 0..combinations_to_make[i].count()
+        for j in 0..combinations_to_make.nth(i).unwrap().len()
         {
             // Per index in de lijst operatie doen, vb [ [A, b], [b, c] ] -> [ [a, B], [b, c] ] etc.
-            for k in combinations_to_make[i].nth(j).unwrap()
+            for k in combinations2[i].nth(j).unwrap()
             {
                 let mut newElement = ""; 
 
@@ -122,7 +134,7 @@ pub fn apply_uu_rule_on_element<'a>(element: &'a str,
     for i in 0..combinations_to_make.len()
     {
         // Loop per combinatie lijst en maak de combinaties, dus voor 2 -> [ [a, b], [b, c] ] etc
-        for j in 0..combinations_to_make[i].count()
+        for j in 0..combinations_to_make.nth(i).unwrap().len()
         {
             // Per index in de lijst operatie doen, vb [ [A, b], [b, c] ] -> [ [a, B], [b, c] ] etc.
             for k in combinations_to_make[i].nth(j).unwrap()
